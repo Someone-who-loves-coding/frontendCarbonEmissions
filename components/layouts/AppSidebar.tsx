@@ -5,11 +5,6 @@ import { usePathname } from "next/navigation";
 
 const links = [
     { href: "/", label: "Dashboard" },
-    { href: "/industries", label: "Industries" },
-    { href: "/regions", label: "Regions" },
-    { href: "/trends", label: "Trends" },
-    { href: "/sources", label: "Data Sources" },
-    { href: "/about", label: "About" },
 ];
 
 export function AppSidebar() {
