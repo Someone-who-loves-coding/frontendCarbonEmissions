@@ -22,9 +22,6 @@ export function AppHeader() {
             </div>
 
             <div className="flex items-center gap-3">
-                <button className="text-xs px-2 py-1 border border-slate-700 rounded-lg">
-                    Dark
-                </button>
                 <div className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-xs">
                     PS
                 </div>
