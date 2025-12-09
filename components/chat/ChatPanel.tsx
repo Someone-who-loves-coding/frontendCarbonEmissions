@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { ChatMessageBubble } from "./ChatMessageBubble";
 import { ChatSuggestions } from "./ChatSuggestions";
+import { useFilters } from "@/filters/useFilters";
 
 type ChatMessage = {
     id: string;
@@ -22,39 +23,7 @@ export function ChatPanel() {
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    // async function handleSend(text?: string) {
-    //     const content = (text ?? input).trim();
-    //     if (!content) return;
-    //
-    //     const newUserMessage: ChatMessage = {
-    //         id: crypto.randomUUID(),
-    //         role: "user",
-    //         content,
-    //     };
-    //
-    //     setMessages((prev) => [...prev, newUserMessage]);
-    //     setInput("");
-    //     setIsLoading(true);
-    //
-    //     try {
-    //         // TODO: replace with actual backend call (Spring Boot / Django etc.)
-    //         // For now, mock a simple response:
-    //         const mockResponse: ChatMessage = {
-    //             id: crypto.randomUUID(),
-    //             role: "assistant",
-    //             content:
-    //                 "This is a placeholder answer. Here, I would analyze the dashboard data, call your emissions API, and optionally query the internet to give a detailed explanation.",
-    //         };
-    //
-    //         // Simulate latency
-    //         await new Promise((r) => setTimeout(r, 600));
-    //
-    //         setMessages((prev) => [...prev, mockResponse]);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }
+    const { country, gas, fromYear, toYear } = useFilters();
 
     async function handleSend(text?: string) {
         const content = (text ?? input).trim();
@@ -71,15 +40,21 @@ export function ChatPanel() {
         setIsLoading(true);
 
         try {
-            const res = await fetch("https://backendcarbonemissions.onrender.com/api/chat", {
+            const res = await fetch("http://localhost:8080/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messages: [...messages, newUserMessage].map(m => ({
-                        role: m.role,
-                        content: m.content,
-                    })),
-                }),
+                    body: JSON.stringify({
+                        messages: [...messages, newUserMessage].map(m => ({
+                            role: m.role,
+                            content: m.content,
+                        })),
+                        dashboardContext: {
+                            country: country || "WORLD",
+                            gas: gas || "co2e_100yr",
+                            fromYear: fromYear ?? 1990,
+                            toYear:   toYear ?? 2025,
+                        }
+                    }),
             });
 
             const data = await res.json();
